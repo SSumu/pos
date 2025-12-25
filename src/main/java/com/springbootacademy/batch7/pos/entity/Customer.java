@@ -58,6 +58,7 @@ public class Customer {
 
     public Customer() {
     }
+//    Customer customer = new Customer(); // This is a POJO. Objects are not created in previous way to access things inside a POJO. Previously created object and this object are two things. Creating an object from a POJO means calling the constructor below or above. Because the constructor in the Customer class is a NoArgs constructor means no arguments in it and there is a AllArgs constructor with all the  arguments.
 
     // This is the all args constructor.
     public Customer(int customerId, String customerName, String customerAddress, double customerSalary, ArrayList<String> contactNumber, String nic, boolean active) {
@@ -68,6 +69,12 @@ public class Customer {
         this.contactNumber = contactNumber;
         this.nic = nic;
         this.active = active;
+    }
+
+    // This constructor matches to the customer in the Customer class. A constructor is created based on the Id and Name.
+    public Customer(int customerId, String customerName) {
+        this.customerId = customerId;
+        this.customerName = customerName;
     }
 
     public int getCustomerId() {
@@ -96,7 +103,7 @@ public class Customer {
 
     public boolean isActive() {
         return active;
-    }
+    } // We can remove this isActive method if it does not allow us to access in another place.
 
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
@@ -157,4 +164,4 @@ public class Customer {
 // There is a standard. Even we create the primary key column as customerId, there it is not created this as like this name. It is like customer_id. If we create like this, it will create this column name as it likes from database. I can customize the name that is generated in this database.
 
 // We can access a field from another place if it is a Getter method.
-// This entity is created to represent the table.
+// This entity is created to represent the table in the database.
