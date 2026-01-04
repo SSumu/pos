@@ -62,6 +62,39 @@
             <artifactId>hibernate-types-60</artifactId>
             <version>2.21.1</version>
         </dependency>
+		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
+		<!-- <dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency> --> <!-- This dependency works only for Spring 4 / Spring 5. But this not work for Spring 6. -->
+		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui -->
+		<!-- <dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency> --> <!-- This dependency works only for Spring 4 / Spring 5. But this not work for Spring 6. -->
+
+		<!-- Swagger / OpenAPI (Spring Boot 3 compatible) -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.5.0</version>
+		</dependency> <!-- This is the dependency is used now to use Swagger in Spring 6. -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.18.0</version>
+		</dependency>
+		<!-- You did not directly add commons-lang3 -->
+		<!-- springdoc-openapi-starter-webmvc-ui pulls it transitively -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.42</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 
 	</dependencies>

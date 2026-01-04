@@ -8,7 +8,7 @@ public class CustomerDTO {
     private double customerSalary;
     private ArrayList<String> contactNumber; // But it is recommended to use List than ArrayList.
     private String nic;
-    private boolean active;
+    private boolean active; // This name should be active_state.
 
     // No args constructor
     public CustomerDTO() {

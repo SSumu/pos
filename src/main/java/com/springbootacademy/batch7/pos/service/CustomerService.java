@@ -3,6 +3,8 @@ package com.springbootacademy.batch7.pos.service;
 import com.springbootacademy.batch7.pos.dto.CustomerDTO;
 import com.springbootacademy.batch7.pos.dto.request.CustomerUpdateDTO;
 
+import java.util.List;
+
 public interface CustomerService {
     // interface is the agreement. This is only interface. interface cannot have a body. interface is an abstract method means the method has not the body. interface is a class only has the method name. Then we can create as many classes as we want for implementation and implement them using the interface. So this needs the implementation classes. So this interface needs the implementation package also which it is impl.
 //    String getCustomer(); // Only the method name is here.
@@ -13,6 +15,12 @@ public interface CustomerService {
     String updateCustomer(CustomerUpdateDTO customerUpdateDTO);
 
     CustomerDTO getCustomerById(int customerId);
+
+    List<CustomerDTO> getAllCustomers();
+
+    String deleteCustomer(int customerId);
+
+    List<CustomerDTO> getAllCustomersByActiveState(boolean activeState); // There is no parameter in here to catch the activeState parameter in the getAllCustomersByActiveState() in the CustomerController class. So we give the boolean activeState as parameter to the getAllCustomersByActiveState().
 }
 
 // This interface must have a method's return type related to the method in

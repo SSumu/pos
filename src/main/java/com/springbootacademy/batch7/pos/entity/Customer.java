@@ -1,10 +1,7 @@
 package com.springbootacademy.batch7.pos.entity;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity; // In the video there is javax instead of jakarta.
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
@@ -21,11 +18,12 @@ public class Customer {
 
     // To define the primary key that we have use the annotation of @Id. Without this @ there is an error in the Customer class.
     @Id
-    @Column(name = "customer_id",length = 45) // We use @Column annotation to customize the column name as customer_id. Inside the brackets we give name variable, and we give the name of the column which we want the column name to be. We can validate this more. As this is the primary key, this is not null. It must have a value. So this Id cannot exceed numbers more than 45. That is the meaning of this value of the length.
+    @Column(name = "customer_id",length = 45) // We use @Column annotation to customize the column name as customer_id. Inside the brackets we give name variable, and we give the name of the column which we want the column name to be. We can validate this more. As this is the primary key, this is not null. It must have a value. So this ID cannot exceed numbers more than 45. That is the meaning of this value of the length.
     // Encapsulation. We do an Encapsulation in here.
+    @GeneratedValue(strategy = GenerationType.AUTO) // We can give auto-generation ID to here. strategy is a variable.
     private int customerId;
 
-    // We can use @NotBlank instead of nullable. To get the @NotBlank that we have to put the relevant Type or something else but it is easier use nullable.
+    // We can use @NotBlank instead of nullable. To get the @NotBlank that we have to put the relevant Type or something else, but it is easier use nullable.
 
     @Column(name = "customer_name",length = 100,nullable = false) // So column name in the table is customer_name. Instead of we put not null in the database, we put nullable = false. So customer's name is must be there. If it is not there, there can be data in the table without the customer name.
     private String customerName;
@@ -49,7 +47,7 @@ public class Customer {
     private String nic;
 
     @Column(name =  "active_state",columnDefinition = "TINYINT default 0") // There is a another data type same as boolean which is TINYINT. TINYINT means 1,0 of the int. If something not comes to this, we can send the 1 as the default value.
-    private boolean active;
+    private boolean active; // This name should be active_state.
 
     // This is the constructor. This is a no args constructor means there are no arguments inside this.
 //    public Customer(){
