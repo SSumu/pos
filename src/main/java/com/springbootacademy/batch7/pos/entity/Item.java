@@ -2,11 +2,17 @@ package com.springbootacademy.batch7.pos.entity;
 
 import com.springbootacademy.batch7.pos.entity.enums.MeasuringUnitType;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity // Entity is a table representation.
 @Table(name = "item") // Name of the table. name is the variable.
-@NoArgsConstructor // These annotations come with the LomBok annotation.
+// These annotations of NoArgsConstructor, AllArgsConstructor, Getter, Setter and ToString come with the LomBok annotation. After we put this annotation, it does not allow us to add the NoArgsConstructor manually using Generate window. (Fn + Alt + Ins)
+@NoArgsConstructor
+@AllArgsConstructor
+//@Getter
+//@Setter
+//@ToString
+@Data // We can use this annotation instead of @Getter, @Setter and @ToString.
 public class Item { // The error in the Item with empty {} means it needs a primary key.
     @Id
     @Column(name = "item_id",length = 45)
@@ -26,7 +32,7 @@ public class Item { // The error in the Item with empty {} means it needs a prim
     private double balanceQty; // balanceQty means quantity.
 
     @Column(name = "supplier_price",length = 100,nullable = false)
-    private double supplierPrice; // balanceQty means quantity.
+    private double supplierPrice;
 
     @Column(name = "selling_price",length = 100,nullable = false)
     private double sellingPrice;
@@ -40,9 +46,14 @@ public class Item { // The error in the Item with empty {} means it needs a prim
     // NoArgs constructor means that it has no parameters.
 //    public Item() {
 //    }
+
+//    private variables cannot be accessed from another classes.
 }
 
 // Item entity to create a table for storing item data of the customers.
 // enum is a data type which it has defined the values can be assigned to it. If values comes to this outside of these defined values, it does not allow those values to it. enum is used to define a fixed set of constants.
 // Here we have to create another package inside the entity package, but we can create that class inside the entity package if we want. But it is easy if we create another package for that.
 // Instead of that
+
+// Getter methods must be created to access the private variables which we want to access.
+// If we remove the Getter method from a class, we cannot access it from another class. This is the absolute idea.

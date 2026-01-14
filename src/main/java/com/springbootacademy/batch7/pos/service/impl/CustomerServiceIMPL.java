@@ -75,8 +75,10 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 //        First we must check whether there is a customer with that id. So first I check my database that there is a customer from the Id was sent from the data from the frontend. It simply tells us to update the Name, Address and Salary related to that Id.
         if (customerRepo.existsById(customerUpdateDTO.getCustomerId())){ // existsById() is a boolean method and it requires an integer id. When the customerUpdateDTO is passed in to existsById(), the Id sent from the frontend is checked by the customerRepo or database to see if there is someone matching that Id.
 //       Here, if there is a customer, when we use JPAQuerySpec we first need to fetch the customer from the database. Otherwise, if we write a direct query, then we have to give a direct query. If tables in a database are created from entities, then they also come from the database through entities. It can also put it in the database using entities. So I must bring the customer it has with the same type. I must be able to bring it from the Customer type. Otherwise, we cannot assign to this. We cannot assign a String to this. So the incoming data to here must be in Customer type. So I do not need to write queries for this. When I call the customerRepo, it shows me the method matches with the Customer type in the top. I do not need to search for it. If I want to assign something to this, the return type must be Customer. Return types of the methods are shown on the right side in the suggestion box. getById() and getOne() methods are deprecated so those methods had been in the previous versions and cannot be used now. So instead of those methods now it has the getReferenceById(). So I just only have to pass the Id to the getReferenceById(). When I pass the Id, getReferenceById() brings me the whole customer. I do not need to write queries. So I need to give the customerId of customerUpdateDTO when it has been sent from the frontend. When we give like this, it searches the database and find the whole customer object related to the Id which means we only send the customerId to the database. Then all the data related to the customer's ID, such as Name, Address, Salary, ContactNumber, nic and activeState are taken and assigned to the customer. Now we have to update it.
-            Customer customer = customerRepo.getReferenceById(customerUpdateDTO.getCustomerId()); // This is the code related to the search operation. We searched the particular customer using this method.
+//            Customer customer = customerRepo.getReferenceById(customerUpdateDTO.getCustomerId()); // This is the code related to the search operation. We searched the particular customer using this method.
 //            Customer customer = customerRepo.findById(customerUpdateDTO.getCustomerId()); // This findById method is gotten from the ChatGPT.
+
+            Customer customer = customerRepo.getById(customerUpdateDTO.getCustomerId()); // This codeline was not needed for this code but in the video it includes this code line for its code error.
 
             // We searched here and retrieved an object and updated the object.
             customer.setCustomerName(customerUpdateDTO.getCustomerName()); // customer is the reference(object). Name has been come from the frontend must be applied inside the setCustomerName(). Now set the update details that I sent from the frontend to the object retrieved from the database.
@@ -84,7 +86,7 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
             customer.setCustomerSalary(customerUpdateDTO.getCustomerSalary()); // Set the salary that came from the frontend.
             // So now in the customer object has not the values from the database. Now the customer object has the new values. Now if this object is sent, it's okay. Because in addition to the values that came from the database, I changed the values in the customer object.
 
-            customerRepo.save(customer); // There is no update method. We use save() method for both save and update. When the customer is sent inside the save(), it first checks to see if there is customer in the database with the Id it is sending. If a customer exists, update the existing customer's changing details. Otherwise, save as a new customer.
+            customerRepo.save(customer); // There is no update method. We use save() method for both save and update. When the customer is sent inside the save(), it first checks to see if there is customer in the database with the ID it is sending. If a customer exists, update the existing customer's changing details. Otherwise, save as a new customer.
             return customerUpdateDTO.getCustomerName() + " Updated Successful"; // Take the value of customerUpdateDTO.
             // The updateCustomer call goes from CustomerServiceIMPL to CustomerService. After that, it reverts back to CustomerServiceIMPL. Accordingly, the updateCustomer call is made from CustomerController. Accordingly, the value returned by CustomerServiceIMPL is returned to updateCustomer in CustomerController.
         }else {
@@ -98,7 +100,8 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
     public CustomerDTO getCustomerById(int customerId) {
         if (customerRepo.existsById(customerId)){ // Checking by Id whether there is a customer related to the id.
             // Even there the getCustomerById() is CustomerDTO type, you cannot bring DTOs from the database.
-            Customer customer = customerRepo.getReferenceById(customerId); // The full details of the customer associated with the Id will be brought here.
+//            Customer customer = customerRepo.getReferenceById(customerId); // The full details of the customer associated with the ID will be brought here.
+            Customer customer = customerRepo.getById(customerId); // This codeline was not needed for this code but in the video it includes this code line for its code error.
             CustomerDTO customerDTO = new CustomerDTO( // customerDTO is the customer object.
                     customer.getCustomerId(), // But the reference is customer. customer has the data.
                     customer.getCustomerName(),
@@ -212,3 +215,4 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 
 // Only the beans are put in the container. We do not put POJOs in the container. We only define what the POJOs are.
 // Practising for debug will ease our work.
+// So we cannot access these private variables(properties) from their names. (E.g.:- We cannot access the customerName property as the customerName(). We can only access it from getCustomerName().)

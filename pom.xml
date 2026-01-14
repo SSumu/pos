@@ -28,7 +28,18 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+<!--		<java.version>17</java.version>-->
+	<!--	<java.version>1.8</java.version> --> <!-- This has been added in the video. -->
+		<java.version>11</java.version> <!-- This has been added in the video. -->
+		<!-- source and target are also needed to mapstruct. These are configuration parts. -->
+<!--		<maven.compiler.source>1.8</maven.compiler.source>-->
+<!--		<maven.compiler.target>1.8</maven.compiler.target>-->
+<!--		<maven.compiler.source>11</maven.compiler.source>-->
+<!--		<maven.compiler.target>11</maven.compiler.target>-->
+		<!-- These versions are needed to be given for mapstruct as these versions are not automatically created. -->
+<!--		<org.mapstruct.version>1.4.1.Final</org.mapstruct.version>-->
+	<!--	<org.mapstruct.version>1.5.2.Final</org.mapstruct.version> --> <!-- Another new version in the video. -->
+		<!-- <maven.compiler.source>, <maven.compiler.target> and <org.mapstruct.version> are needed for the SpringBoot version in the video but in this SpringBoot version, it executed even without these version tags. -->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -95,7 +106,44 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+<!--			<version>2.4.1</version>--> <!-- This is the version in the video. But this version is not used now, and it has been upgraded. -->
+			<version>3.2.0</version>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+<!--			<version>1.4.2.Final</version>--> <!-- It was executed even with this version tag. -->
+		<!--	<version>${org.mapstruct.version}</version>--> <!-- This is needed in the video, but it was executed even without this version tag in this SpringBoot version. -->
+			<version>1.4.2.Final</version>
+		<!--	<version>1.5.3.Final</version> --> <!-- It was 1.5.2.Final version in the video. -->
+<!--			<scope>compile</scope>-->
+		</dependency>
 
+		<!-- Source: https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+<!--			<version>1.4.2.Final</version>--> <!-- It was executed even with this version tag. -->
+		<!--	<version>${org.mapstruct.version}</version>--> <!-- This was needed in the video, but it was executed even without this version tag in this SpringBoot version. -->
+<!--			<scope>compile</scope>--> <!-- It was executed with this <scope> tag in this SpringBoot version. -->
+			<version>1.4.2.Final</version>
+		<!--	<version>1.5.3.Final</version> --> <!-- It was 1.5.2.Final version in the video. -->
+		<!--	<scope>provided</scope>--> <!-- This was needed in the SpringBoot version in the video. But it was executed with the above <scope> tag in this SpringBoot version. -->
+		</dependency>
+
+		<!-- This dependency was put in the video, but it was not needed for this SpringBoot version. -->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework</groupId>-->
+<!--			<artifactId>spring-webmvc</artifactId>-->
+<!--			<version>5.3.9</version>-->
+<!--		</dependency>-->
+
+		<!-- Care should be taken when configuring third-party dependencies because the versions of these third-party dependencies are changed. -->
 
 	</dependencies>
 

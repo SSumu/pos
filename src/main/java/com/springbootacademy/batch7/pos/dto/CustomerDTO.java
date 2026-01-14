@@ -9,6 +9,7 @@ public class CustomerDTO {
     private ArrayList<String> contactNumber; // But it is recommended to use List than ArrayList.
     private String nic;
     private boolean active; // This name should be active_state.
+//    These properties(variables) are became private. These properties have been protected. Another security has been added.
 
     // No args constructor
     public CustomerDTO() {
