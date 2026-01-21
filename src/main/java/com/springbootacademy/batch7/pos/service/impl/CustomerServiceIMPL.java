@@ -1,9 +1,11 @@
 package com.springbootacademy.batch7.pos.service.impl;
 
 //import com.springbootacademy.batch7.pos.dto.CustomerDTO;
+
 import com.springbootacademy.batch7.pos.dto.CustomerDTO;
 import com.springbootacademy.batch7.pos.dto.request.CustomerUpdateDTO;
 import com.springbootacademy.batch7.pos.entity.Customer;
+import com.springbootacademy.batch7.pos.exception.NotFoundException;
 import com.springbootacademy.batch7.pos.repo.CustomerRepo;
 import com.springbootacademy.batch7.pos.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service // There it uses this annotation to define this as a Service class. If we need objects from a class, we have to put @Component and there it wants to put it in the container as a bean which simply means an object. @Service annotation has the @Component annotation. So it already becomes a bean by this @Service and puts it into the container.
+@Service
+// There it uses this annotation to define this as a Service class. If we need objects from a class, we have to put @Component and there it wants to put it in the container as a bean which simply means an object. @Service annotation has the @Component annotation. So it already becomes a bean by this @Service and puts it into the container.
 @Transactional // This keeps the Hibernate session open for the whole method. This is not mentioned in the video.
 public class CustomerServiceIMPL implements CustomerService {
 //    @Override
 //    public String saveCustomerrr(CustomerDTO customerDTO) {
-////        return "";
+    /// /        return "";
 //        return null;
 //    }
 
@@ -26,8 +29,8 @@ public class CustomerServiceIMPL implements CustomerService {
 
 // It says to implement the method in the CustomerService when the method name is changed.
 
-@Autowired
-private CustomerRepo customerRepo; // Added the object of CustomerRepo class to pass the data to the CustomerRepo class.
+    @Autowired
+    private CustomerRepo customerRepo; // Added the object of CustomerRepo class to pass the data to the CustomerRepo class.
 
     @Override
     public String saveCustomer(CustomerDTO customerDTO) { // Data was correctly passed to the customerDTO. So the data has come to here must be sent the database.
@@ -73,7 +76,7 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 //    }
     public String updateCustomer(CustomerUpdateDTO customerUpdateDTO) { // Implement the updateCustomer() was created in the CustomerService interface. Before update the customer's data, we must check that there is a customer with that id.
 //        First we must check whether there is a customer with that id. So first I check my database that there is a customer from the Id was sent from the data from the frontend. It simply tells us to update the Name, Address and Salary related to that Id.
-        if (customerRepo.existsById(customerUpdateDTO.getCustomerId())){ // existsById() is a boolean method and it requires an integer id. When the customerUpdateDTO is passed in to existsById(), the Id sent from the frontend is checked by the customerRepo or database to see if there is someone matching that Id.
+        if (customerRepo.existsById(customerUpdateDTO.getCustomerId())) { // existsById() is a boolean method and it requires an integer id. When the customerUpdateDTO is passed in to existsById(), the Id sent from the frontend is checked by the customerRepo or database to see if there is someone matching that Id.
 //       Here, if there is a customer, when we use JPAQuerySpec we first need to fetch the customer from the database. Otherwise, if we write a direct query, then we have to give a direct query. If tables in a database are created from entities, then they also come from the database through entities. It can also put it in the database using entities. So I must bring the customer it has with the same type. I must be able to bring it from the Customer type. Otherwise, we cannot assign to this. We cannot assign a String to this. So the incoming data to here must be in Customer type. So I do not need to write queries for this. When I call the customerRepo, it shows me the method matches with the Customer type in the top. I do not need to search for it. If I want to assign something to this, the return type must be Customer. Return types of the methods are shown on the right side in the suggestion box. getById() and getOne() methods are deprecated so those methods had been in the previous versions and cannot be used now. So instead of those methods now it has the getReferenceById(). So I just only have to pass the Id to the getReferenceById(). When I pass the Id, getReferenceById() brings me the whole customer. I do not need to write queries. So I need to give the customerId of customerUpdateDTO when it has been sent from the frontend. When we give like this, it searches the database and find the whole customer object related to the Id which means we only send the customerId to the database. Then all the data related to the customer's ID, such as Name, Address, Salary, ContactNumber, nic and activeState are taken and assigned to the customer. Now we have to update it.
 //            Customer customer = customerRepo.getReferenceById(customerUpdateDTO.getCustomerId()); // This is the code related to the search operation. We searched the particular customer using this method.
 //            Customer customer = customerRepo.findById(customerUpdateDTO.getCustomerId()); // This findById method is gotten from the ChatGPT.
@@ -89,7 +92,7 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
             customerRepo.save(customer); // There is no update method. We use save() method for both save and update. When the customer is sent inside the save(), it first checks to see if there is customer in the database with the ID it is sending. If a customer exists, update the existing customer's changing details. Otherwise, save as a new customer.
             return customerUpdateDTO.getCustomerName() + " Updated Successful"; // Take the value of customerUpdateDTO.
             // The updateCustomer call goes from CustomerServiceIMPL to CustomerService. After that, it reverts back to CustomerServiceIMPL. Accordingly, the updateCustomer call is made from CustomerController. Accordingly, the value returned by CustomerServiceIMPL is returned to updateCustomer in CustomerController.
-        }else {
+        } else {
             // If there is no such customer, I throw an exception that Java has ClassNotFoundException().
             throw new RuntimeException("no data found for that id");
         }
@@ -98,7 +101,7 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 
     @Override
     public CustomerDTO getCustomerById(int customerId) {
-        if (customerRepo.existsById(customerId)){ // Checking by Id whether there is a customer related to the id.
+        if (customerRepo.existsById(customerId)) { // Checking by Id whether there is a customer related to the id.
             // Even there the getCustomerById() is CustomerDTO type, you cannot bring DTOs from the database.
 //            Customer customer = customerRepo.getReferenceById(customerId); // The full details of the customer associated with the ID will be brought here.
             Customer customer = customerRepo.getById(customerId); // This codeline was not needed for this code but in the video it includes this code line for its code error.
@@ -114,13 +117,13 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 //            return customer; // If we return customer, it is a error. Because it must return a CustomerDTO and not a Customer. So we have to convert the customer named CustomerEntity to the CustomerDTO. So returning customer is wrong.
             return customerDTO; // So customerDTO must be returned.
 //            The values that come from the customer, most of them come from the customer related to this ID. I am pushing on the customerDTO. I am grabbing it from the customer reference. The ID that came from the reference. The name that came from the reference. I am mapping the constructor like that. After that, return. Otherwise, I am returning an exception saying that there is no customer. After returning, the customerDTO, that is, the customer reference data, is inside the customerDTO.
-        }else {
+        } else {
             throw new RuntimeException("No Customer");
         }
 //        return null; // It is not needed to put a return in here.
     }
 
-//    Here we call the database and fetch the customers. In here, it is also same as fetching one customer like previously. Now we need to fetch the data into a list. We fetched just one object before, now we have many.
+    //    Here we call the database and fetch the customers. In here, it is also same as fetching one customer like previously. Now we need to fetch the data into a list. We fetched just one object before, now we have many.
     @Override
     public List<CustomerDTO> getAllCustomers() {
         List<Customer> getAllCustomers = customerRepo.findAll(); // As we cannot call the database from DTOs, we have to give Customer entity instead of CustomerDTO. customerRepo is our database. When we type . after the customerRepo, it shows us the methods with the return type of the variable. For this location, it suggests us the most relevant method at the top of the suggestion box which is findAll()    List<Customer>. There is no difference after using findAll(). All the customers in the database will come to the getAllCustomers variable. it has 10 data(assumption).
@@ -128,7 +131,8 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 //        return null;
 //        System.out.println(getAllCustomers.get(0)); // So this gets the first element from the List by calling the getAllCustomers. We do not need to mention like this with the index of the list inside the forEach (e.g.:- get(0)).
         // We use foreach loop to get the data to a list. We can loop the data in the list by using foreach loop.
-        List<CustomerDTO> customerDTOList = new ArrayList<>();// List must be converted into the CustomerDTO type. customerDTOList is the reference needs to put the data. ArrayList<>() is assigned to the customerDTOList. But customerDTOList has no data. The data in getAllCustomers needs to be inserted into the customerDTOList which means data in the Customer of List<Customer> needs to be inserted into the CustomerDTO of List<CustomerDTO>.
+        if (getAllCustomers.size()>0) {
+            List<CustomerDTO> customerDTOList = new ArrayList<>();// List must be converted into the CustomerDTO type. customerDTOList is the reference needs to put the data. ArrayList<>() is assigned to the customerDTOList. But customerDTOList has no data. The data in getAllCustomers needs to be inserted into the customerDTOList which means data in the Customer of List<Customer> needs to be inserted into the CustomerDTO of List<CustomerDTO>.
 //        Customer customer = getAllCustomers.get(0);
 
 //        As the CustomerDTO is outside the forEach loop, this CustomerDTO is not recreated new every time it spins. Because the customerDTOList is created at the top. So the customerDTOList has the list of customers of type CustomerDTO.
@@ -136,36 +140,46 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
 //        forEach Loop:-
 //        What happens in a forEach is that we do not give a size to operate the loop. The rounds of forEach loop is decided by the size of the reference(in here it is getAllCustomers) we have given. getAllCustomers is a list. So getAllCustomers brings all the customers in the database to the getAllCustomers. So getAllCustomers has a size that how many customers there are. It means that how many Customer entities are in the getAllCustomers. That means how many single customerDTO objects are in the Customer entity. That is the size of the getAllCustomers. getAllCustomers automatically takes the size of it, and we do not need to give it manually. But per one round, it has only one object. If we consider the first round, getAllCustomers list has the first object or the first Customer entity.
 
-        for (Customer customer : getAllCustomers){ // Type of the getAllCustomers is Customer. So the getAllCustomers has the list of customers which the type is Customer. The first customer which comes when the for loop rotates is assigned at the beginning of the brackets like Customer customer. So now we have a problem that how the getAllCustomers list is assigned to the single Customer object? The answer is that we can assign a one customer object to the customer entity using get() method. In forEach, we do not need to give the index to execute the loop because the forEach loop mechanism has been built like that. When the forEach loop loops for the first round, first round scenario of the for loop has happened to that. When the first round is rotated, the first object of the getAllCustomers is put into the single Customer object. Then delete everything in the Customer object and add the last object of the getAllCustomers to the Customer object. When this loop rotates, Customer object was assigned each objects. But those are not exist in the Customer object. So inside the loop customer is assigned with the first value for the one time when one object rotates. So if we catch the values from customer and puts it into the customerDTOList, that's okay.
+            for (Customer customer : getAllCustomers) { // Type of the getAllCustomers is Customer. So the getAllCustomers has the list of customers which the type is Customer. The first customer which comes when the for loop rotates is assigned at the beginning of the brackets like Customer customer. So now we have a problem that how the getAllCustomers list is assigned to the single Customer object? The answer is that we can assign a one customer object to the customer entity using get() method. In forEach, we do not need to give the index to execute the loop because the forEach loop mechanism has been built like that. When the forEach loop loops for the first round, first round scenario of the for loop has happened to that. When the first round is rotated, the first object of the getAllCustomers is put into the single Customer object. Then delete everything in the Customer object and add the last object of the getAllCustomers to the Customer object. When this loop rotates, Customer object was assigned each objects. But those are not exist in the Customer object. So inside the loop customer is assigned with the first value for the one time when one object rotates. So if we catch the values from customer and puts it into the customerDTOList, that's okay.
 //       So what we have to do is that some data or the first data sets to the customer reference when the first round rotates. So we have to create a DTO. So now first customer's data are assigned to the customer reference in the first round. So if we put the methods of the customer reference, then the data in the customer reference has came to the customerDTO.
 
-            CustomerDTO customerDTO = new CustomerDTO(
-                    customer.getCustomerId(), // But the reference is customer. customer has the data.
-                    customer.getCustomerName(),
-                    customer.getCustomerAddress(),
-                    customer.getCustomerSalary(),
-                    customer.getContactNumber(),
-                    customer.getNic(),
-                    customer.isActive()
-            ); // Creates new DTO object. customer's data are put into the DTO.
+                CustomerDTO customerDTO = new CustomerDTO(
+                        customer.getCustomerId(), // But the reference is customer. customer has the data.
+                        customer.getCustomerName(),
+                        customer.getCustomerAddress(),
+                        customer.getCustomerSalary(),
+                        customer.getContactNumber(),
+                        customer.getNic(),
+                        customer.isActive()
+                ); // Creates new DTO object. customer's data are put into the DTO.
 //            So we can put this customerDTO into the customerDTOList. To put the customerDTO into the customerDTOList, we take the customerDTOList reference, and put it outside the customerDTO and after the customerDTO has been created and inside the forEach that reference name is written with add() with boolean type method which requires CustomerDTO type. So we need to add the customerDTO to add().
-            customerDTOList.add(customerDTO); // The DTO that I added from customer to customerDTO in the forEach loop, and added it to customerDTOList. First customer's details are added into the customerDTOList in the first round. First customer's details are erased from the customer at the second round when the forEach loop enters the details of the second customer to the customerDTOList. So the second customer is added as the new object to the customer(reference). So the new object is initialized in the customerDTO reference. Previous customer is erased. So the customer reference has the second object's details. So the second object's details are inserted into the customerDTO. So the newly created DTO is put into the customerDTOList when it rotates in the second round. When the third round starts, third object is put from the getAllCustomers to the customer reference. So the previous object is erased from the customer reference. Even it is erased from the customer, that object was already sent from the customerDTOList in the forEach loop to customerDTOList where it was created initially. customerDTOList in the initial location is not recreated again and again.
-        }
+                customerDTOList.add(customerDTO); // The DTO that I added from customer to customerDTO in the forEach loop, and added it to customerDTOList. First customer's details are added into the customerDTOList in the first round. First customer's details are erased from the customer at the second round when the forEach loop enters the details of the second customer to the customerDTOList. So the second customer is added as the new object to the customer(reference). So the new object is initialized in the customerDTO reference. Previous customer is erased. So the customer reference has the second object's details. So the second object's details are inserted into the customerDTO. So the newly created DTO is put into the customerDTOList when it rotates in the second round. When the third round starts, third object is put from the getAllCustomers to the customer reference. So the previous object is erased from the customer reference. Even it is erased from the customer, that object was already sent from the customerDTOList in the forEach loop to customerDTOList where it was created initially. customerDTOList in the initial location is not recreated again and again.
+            }
 
 //        return getAllCustomers; // But we cannot return the getAllCustomers from here. We must return a DTO because the return type of the method is DTO type, but we have an entity because the database provides us entities.
-        return customerDTOList; // Now there is no problem and errors.
+            return customerDTOList; // Now there is no problem and errors.
 //        So if we return the customerDTOList, we have the DTO list instead of entity list.
+        }else {
+//            We can return any other thing instead of throwing an exception also if we want.
+//            return null;
+//            throw new RuntimeException("Not Found");
+//          We do not use above Exceptions because there is a standard way that is creating custom exception classes.
+//          In this SpringBoot version, it did not suggest me the NotFoundException as in the video.
+            throw new NotFoundException("No Customer Found"); // This calls the constructor in the NotFoundException class. As the constructor in the NotFoundException class has the String message parameter, we send the argument as "No Customer Found".
+        }
     }
+
+//  Exception handling resolves errors caused by data not being available in the database.
 
     @Override
     public String deleteCustomer(int customerId) {
 //        return ""; // This automatically comes in this version.
 //        return null; // // This automatically comes in the version of the video.
         // Check whether there is a customer related to the ID.
-        if (customerRepo.existsById(customerId)){
+        if (customerRepo.existsById(customerId)) {
             customerRepo.deleteById(customerId); // As the customerId is integer type, we must find the delete method can send the parameter ID in integer type.
-            return "deleted successfully "+customerId; // When this value is returned from here, it goes to the deleted variable in the CustomerController class.
-        }else {
+            return "deleted successfully " + customerId; // When this value is returned from here, it goes to the deleted variable in the CustomerController class.
+        } else {
             throw new RuntimeException("No Customer Found In That Id");
         }
     }
@@ -174,7 +188,7 @@ private CustomerRepo customerRepo; // Added the object of CustomerRepo class to 
     public List<CustomerDTO> getAllCustomersByActiveState(boolean activeState) { // There was an error saying that there is no parameter in the getAllCustomersByActiveState() before putting the boolean activeState as a parameter.
         List<Customer> getAllCustomers = customerRepo.findAllByActiveEquals(activeState); // Data comes to the getAllCustomers after the filtering from database. So the findAll() is incorrect to do this task. Because it gives all the customers. I need to filter the customers from here. But there are no methods to filter the customers. There is a easy way to do this. As this is a find method, type the find but do not send as find only because we do not know what the database has. Just write something like findgsergnjergkrenj. Also put the activeState to it. It asks us to create this method in the customerRepo when we type this method in here because there is no such method in the customerRepo. If we type f and press ctrl + space, it suggests us the query method that we have created. Now it is correct because we have fetched the data to the Customer from findAllByActiveEquals query.
         List<CustomerDTO> customerDTOList = new ArrayList<>();
-        for (Customer customer : getAllCustomers){
+        for (Customer customer : getAllCustomers) {
             CustomerDTO customerDTO = new CustomerDTO(
                     customer.getCustomerId(), // But the reference is customer. customer has the data.
                     customer.getCustomerName(),

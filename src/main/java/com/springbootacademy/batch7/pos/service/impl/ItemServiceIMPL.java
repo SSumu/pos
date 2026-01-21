@@ -1,10 +1,12 @@
 package com.springbootacademy.batch7.pos.service.impl;
 
+import com.springbootacademy.batch7.pos.dto.paginated.PaginatedResponseItemDTO;
 import com.springbootacademy.batch7.pos.dto.request.ItemSaveRequestDTO;
 import com.springbootacademy.batch7.pos.dto.response.ItemGetResponseDTO;
 import com.springbootacademy.batch7.pos.entity.Customer;
 import com.springbootacademy.batch7.pos.entity.Item;
 import com.springbootacademy.batch7.pos.entity.enums.MeasuringUnitType;
+import com.springbootacademy.batch7.pos.exception.NotFoundException;
 import com.springbootacademy.batch7.pos.repo.ItemRepo;
 import com.springbootacademy.batch7.pos.service.ItemService;
 //import com.springbootacademy.batch7.pos.util.mappers.ItemMapper;
@@ -13,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,6 +60,15 @@ public class ItemServiceIMPL implements ItemService {
 //        item.setActiveState(true); // But if we do not give the activeState, then it goes as false. It does not matter when the activeState is false. But if we need to send true, we can change this with taking the item reference. We can set the true if we want to send true. But we do not need to send the activeState as true because item must be in false level when I add the item. So we put the data into the item.
 //      This is how to do this using itemMapper.
         Item item = itemMapper.dtoToEntity(itemSaveRequestDTO); // What I do here is that data come to item from ItemSaveRequestDTO type. I have the ItemSaveRequestDTO type so it needs to put ItemSaveRequestDTO type into the item. I can use dtoToEntity() here which requires the ItemSaveRequestDTO type. Both modelMapper and itemMapper are same.
+        // checking for an exception.
+//        if (!item.getMeasuringUnitType().equals("KG") || !item.getMeasuringUnitType().equals("NUMBER") ){
+////            throw new Exception(); // We can give any exception we like. In case like this, what Malinga sir do is create a separate exception and keep it. Before an exception is thrown, we can create a suitable exception and send it to the frontend using the AppWideExceptionHandler in the advisor package. Handle an exception before it occurs.
+////            throw new NotFoundException("units not match"); // We can send like this, but it should not be done. Because the messages are dynamically changing.
+//        }
+//      When we catch the exception inside the above if block, no error arise in the below save(). Because if the condition in the if block is false, save() will not be executed. Because when it comes to exception inside the if block, it is executed.
+//      There is a way to convert enum and check.
+//      Exceptions must be handled in the ServiceIMPL classes.
+//      Exceptions must not be handled in the Controller classes.
         if(!itemRepo.existsById(item.getItemId())){ // Checking such an ID is there. If there is no such an item, then save the new item.
             itemRepo.save(item); // Sending the item reference to save the new item.
             return item.getItemId()+" saved successfully"; // Otherwise let's return itemId.
@@ -106,6 +119,40 @@ public class ItemServiceIMPL implements ItemService {
         }else {
             throw new RuntimeException("Item is not active");
         }
+    }
+
+    @Override
+    public List<ItemGetResponseDTO> getItemsByActiveStatus(boolean activeStatus) {
+//        return List.of(); // This gives in this Spring Boot version.
+        List<Item> items = itemRepo.findAllByActiveStateEquals(activeStatus);
+        if (items.size()>0){
+            List<ItemGetResponseDTO> itemGetResponseDTOS = itemMapper.entityListToDtoList(items);
+            return itemGetResponseDTOS;
+        }else {
+            throw new NotFoundException("Item is not active");
+        }
+    }
+
+    @Override
+    public PaginatedResponseItemDTO getItemByActiveStatusWithPaginated(boolean activeStatus, int page, int size) {
+        Page<Item> items = itemRepo.findAllByActiveStateEquals(activeStatus, PageRequest.of(page, size)); // Data are fetched to the Page type reference from the database. As the data types are changed in the generics, in this time, Item entity is assigned to the Page type reference as generics. Here we must not send page parameter as it is, and we must send the PageRequest parameter instead of page parameter. PageRequest has the of() method and it requires two parameters which are page and size. PageRequest.of(page, size) cannot be applied at first. If there are data related to the getItemByActiveStatusWithPaginated() with filtering, those data must be mapped into the activeStatus. After that was mapped, PageRequest.of(page, size) must be put at the last. By calling this method, we have fetched the data to items reference after the page number was mapped with the size.
+//        int count = itemRepo.coeregfrrAllByActiveStateEquals(activeStatus); // This is the previous version of the below method.
+        int count = itemRepo.countAllByActiveStateEquals(activeStatus); // I am talking to this repo and asking them to provide the data related to getItemByActiveStatusWithPaginated(). Do not change this countAllByActiveStateEquals() and it must be as it is because if there are more data and even one of its filter was changed, the incoming count will be changed. We do not send page and size because the page and size were already filtered and come. countAllByActiveStateEquals() takes the whole count. We only send the activeStatus to it.
+        if (items.getSize()<1){ // <1 means 0.
+            throw new NotFoundException("No Data");
+        }
+//        return items; // This cannot be returned because it is an entity reference.
+        PaginatedResponseItemDTO paginatedResponseItemDTO = new PaginatedResponseItemDTO(
+                itemMapper.ListDTOToPage(items), // This method requires the Page type items reference. As soon as I gave the items reference to ListDTOToPage(), that method converts it to the List<ItemGetResponseDTO> list and assign it to the List<ItemGetResponseDTO> list value in the PaginatedResponseItemDTO class.
+//                2 // dataCount needs to be given here after the ListDTOToPage() was given. But in here it was not given because it needs to check whether the method is worked. But this kind of manual values cannot be given. It is not a problem if a query is put to here.
+                count // This dataCount must be taken from the database.
+//                itemRepo.countAllByActiveStateEquals(activeStatus); // Instead of using count variable, we can give it directly like this. Then we do not need to define the count variable. It shortens the code. Directly calls the repo and put the value comes to the countAllByActiveStateEquals().
+        );
+//        List<ItemGetResponseDTO> list; // We need a list in ItemGetResponseDTO type, but we have an items list in Page<Item> type from database. This type is inside the PaginatedResponseItemDTO type. This is what first needs to be done. This needs to be given at first
+//        private long dataCount; // Then after this needs to be given.
+//        Above two variables(List<ItemGetResponseDTO> list, private long dataCount) were not in here and those were there at that time for our ease of knowing.
+        return paginatedResponseItemDTO; // But this null now because there are no data (Previous Situation).
+//        Pages are also like arrays. So the first page of the Page is 0.
     }
 }
 

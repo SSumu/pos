@@ -5,8 +5,11 @@ import com.springbootacademy.batch7.pos.dto.request.CustomerUpdateDTO;
 import com.springbootacademy.batch7.pos.entity.Customer;
 import com.springbootacademy.batch7.pos.service.CustomerService;
 import com.springbootacademy.batch7.pos.service.impl.CustomerServiceIMPL;
+import com.springbootacademy.batch7.pos.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,15 +104,27 @@ public class CustomerController {
 //   Now we need to send the actual value to the database and give the customer associated with the actual value to the frontend. The data returned from the method is the same type as the data returned from the frontend. Just as you would get String data to return a String result, you would get CustomerDTO data from the frontend to return a CustomerDTO result from the method.
     }
 
-    @GetMapping(
-//            path = {"/get-all-customers"}  // As all the customers are fetched, id is not needed. As the id is not used here, param is not used. If we need, we can give the path inside {} like this.
-            path = "/get-all-customers" // Otherwise, it can keep without {} brackets and it is not incorrect.
-    )
-    public List<CustomerDTO> getAllCustomers(){ // CustomerDTO brings only one customer object. As we need all the customer objects, we need a List. So the type must be the List of CustomerDTOs. So the type is List<CustomerDTO>. <> is the Generics. So we want the List of CustomerDTOs. So we have written the type of the List inside the Generics<> which means this is a CustomerDTO type List. If we want to send all the customer objects in the database, we have to take those all customer objects into the CustomerDTO type object. So this List is used to keep list, collections. So we can keep so many CustomerDTO type lists.
-        List<CustomerDTO> allCustomers = customerService.getAllCustomers();// So as usual, if the return type is mentioned as List<CustomerDTO>, we definitely have to fetch the data in that type from anywhere. allCustomers is the reference in List<CustomerDTO> type. Then we call the customerService. So do we need to send something inside parameters? It is not needed give any parameter as we do not filter anything. As we get all the customers, it is not needed to give any condition like in the getCustomerById(). All the customers means active and inactive or customers in any type.
-//        return null;
-        return allCustomers; // So we can return the allCustomers without any problem. If allCustomers receives data, allCustomers will match the List<CustomerDTO> type when returned from here. Then it will goes to frontend.
-    }
+//    @GetMapping(
+////            path = {"/get-all-customers"}  // As all the customers are fetched, id is not needed. As the id is not used here, param is not used. If we need, we can give the path inside {} like this.
+//            path = "/get-all-customers" // Otherwise, it can keep without {} brackets and it is not incorrect.
+//    )
+//    public List<CustomerDTO> getAllCustomers(){ // CustomerDTO brings only one customer object. As we need all the customer objects, we need a List. So the type must be the List of CustomerDTOs. So the type is List<CustomerDTO>. <> is the Generics. So we want the List of CustomerDTOs. So we have written the type of the List inside the Generics<> which means this is a CustomerDTO type List. If we want to send all the customer objects in the database, we have to take those all customer objects into the CustomerDTO type object. So this List is used to keep list, collections. So we can keep so many CustomerDTO type lists.
+//        List<CustomerDTO> allCustomers = customerService.getAllCustomers();// So as usual, if the return type is mentioned as List<CustomerDTO>, we definitely have to fetch the data in that type from anywhere. allCustomers is the reference in List<CustomerDTO> type. Then we call the customerService. So do we need to send something inside parameters? It is not needed give any parameter as we do not filter anything. As we get all the customers, it is not needed to give any condition like in the getCustomerById(). All the customers means active and inactive or customers in any type.
+////        return null;
+//        return allCustomers; // So we can return the allCustomers without any problem. If allCustomers receives data, allCustomers will match the List<CustomerDTO> type when returned from here. Then it will goes to frontend.
+//    }
+
+@GetMapping(
+        path = "/get-all-customers"
+)
+public ResponseEntity<StandardResponse> getAllCustomers(){
+    List<CustomerDTO> allCustomers = customerService.getAllCustomers();
+
+    return new ResponseEntity<StandardResponse>(
+            new StandardResponse(200,"Success",allCustomers),
+            HttpStatus.OK // Create a new object from StandardResponse. For the get, status code is 200. Status code is 200 for GET request. allCustomers is the object containing all the customers to be returned.
+    );
+}
 
     // This is the another way of sending the parameter which is using path variable.
     @DeleteMapping(
@@ -126,7 +141,7 @@ public class CustomerController {
     @GetMapping(
             path = "/get-all-customers-by-active-state/{status}"
     )
-    public List<CustomerDTO> getAllCustomersByActiveState(@PathVariable(value = "status") boolean activeState){ // @PathVariable catches the value comes from the link to the getAllCustomersByActiveState(). So the value must be put into the activeState as it is a boolean true or false value. As this activeState is a boolean type with @PathVariable, it has two values of true and false only. So in the Swagger U I where it gives us those values in the dropdown.
+    public List<CustomerDTO> getAllCustomersByActiveState(@PathVariable(value = "status") boolean activeState){ // @PathVariable catches the value comes from the link to the getAllCustomersByActiveState(). So the value must be put into the activeState as it is a boolean true or false value. As this activeState is a boolean type with @PathVariable, it has two values of true and false only. So in the Swagger UI where it gives us those values in the dropdown.
         List<CustomerDTO> allCustomers = customerService.getAllCustomersByActiveState(activeState); // The activeState needs to be sent throughout this getAllCustomersByActiveState(). The error in the activeState inside the getAllCustomersByActiveState() means that there is no parameter in this method in the CustomerService class.
         return allCustomers;
         // If we put a debugger point to allCustomers line and run in debugger mode, it shows us the stopped position in the running process, and it shows us the value of the activeState in the @PathVariable codeline was assigned to the activeState in the customerService codeline.

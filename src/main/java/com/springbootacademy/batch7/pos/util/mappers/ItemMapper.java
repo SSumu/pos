@@ -4,6 +4,7 @@ import com.springbootacademy.batch7.pos.dto.request.ItemSaveRequestDTO;
 import com.springbootacademy.batch7.pos.dto.response.ItemGetResponseDTO;
 import com.springbootacademy.batch7.pos.entity.Item;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,6 +16,11 @@ public interface ItemMapper {
     ItemGetResponseDTO entityToDto(Item item); // If only DTO is needed, it is like this.
     Item dtoToEntity(ItemSaveRequestDTO itemSaveRequestDTO); // This converts the dto to entity(Item). What needs to be done is to convert it to an Item type. So what needs to be done is to convert the DTO has been come from the frontend to the save method into the Entity. After that put two types what you need to map. So ItemSaveResponseDTO comes from the frontend. itemSaveResponseDTO is the reference. Always parentheses include the data type comes from the frontend.
 //    ItemSaveResponseDTO---->Item
+
+//    Page<Item> items----->   List<ItemGetResponseDTO> list :- Conversion
+    // The type which has the data is put as a parameter. It is put into the () on the right side.
+    List<ItemGetResponseDTO> ListDTOToPage(Page<Item> items); // Creation of the method. Data in the Page<Item> items will be converted to the List<ItemGetResponseDTO> type when the ListDTOToPage() is called.
+
 }
 
 // ItemList -----> ItemResponseDTO :- This is the conversion.
