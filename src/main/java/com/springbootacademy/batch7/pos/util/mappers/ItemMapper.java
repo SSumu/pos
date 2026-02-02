@@ -21,6 +21,7 @@ public interface ItemMapper {
     // The type which has the data is put as a parameter. It is put into the () on the right side.
     List<ItemGetResponseDTO> ListDTOToPage(Page<Item> items); // Creation of the method. Data in the Page<Item> items will be converted to the List<ItemGetResponseDTO> type when the ListDTOToPage() is called.
 
+    List<ItemGetResponseDTO> pageToList(Page<Item> getAllActiveItemsByPaginated); // Creation of the method.
 }
 
 // ItemList -----> ItemResponseDTO :- This is the conversion.

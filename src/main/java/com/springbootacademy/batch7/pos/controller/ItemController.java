@@ -104,5 +104,22 @@ public class ItemController {
 
     }
 
+    @GetMapping(
+            path = "/get-all-active-items-paginated",
+            params = {"page","size","activeState"} // If we are going to get the active items, it is not needed to send params. Otherwise, we can get this dynamically.
+    )
+    public ResponseEntity<StandardResponse> getAllActiveItemsPaginated(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") @Max(50) int size,
+            @RequestParam(value = "activeState") boolean activeState
+    ){
+        PaginatedResponseItemDTO paginatedResponseItemDTO = itemService.getAllActiveItemsPaginated(page,size,activeState); // paginatedResponseItemDTO is the reference. What we are really doing is accessing a method in the itemService from getAllActiveItemsPaginated().
+        return new ResponseEntity<StandardResponse>(
+                new StandardResponse(200, "Success", paginatedResponseItemDTO),
+                HttpStatus.OK
+        );
+
+    }
+
 
 }

@@ -154,6 +154,18 @@ public class ItemServiceIMPL implements ItemService {
         return paginatedResponseItemDTO; // But this null now because there are no data (Previous Situation).
 //        Pages are also like arrays. So the first page of the Page is 0.
     }
+
+    @Override
+    public PaginatedResponseItemDTO getAllActiveItemsPaginated(int page, int size, boolean activeState) {
+//        return null;
+//        Page<Item> getAllActiveItemsByPaginated = itemRepo.gergergterg(activeState,PageRequest.of(page, size)); // It is incorrect to send the activeState at the end. The activeState must be sent first. This is the previous form of the below codeline.
+        Page<Item> getAllActiveItemsByPaginated = itemRepo.findAllByActiveStateEquals(activeState,PageRequest.of(page, size)); // This is the new form of the above codeline after the method was created at the itemRepo.
+        return new PaginatedResponseItemDTO(
+                itemMapper.pageToList(getAllActiveItemsByPaginated),
+//                itemRepo.count() // count must be changed.
+                itemRepo.countAllByActiveStateEquals(activeState) // It must be changed like this. count must be filtered by activeState.
+        );
+    }
 }
 
 // So we need to configure the Model Mapper and then put it into the container. We must add Model Mapper as a dependency.

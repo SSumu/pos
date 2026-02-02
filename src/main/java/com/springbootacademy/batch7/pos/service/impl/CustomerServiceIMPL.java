@@ -75,8 +75,8 @@ public class CustomerServiceIMPL implements CustomerService {
 //
 //    }
     public String updateCustomer(CustomerUpdateDTO customerUpdateDTO) { // Implement the updateCustomer() was created in the CustomerService interface. Before update the customer's data, we must check that there is a customer with that id.
-//        First we must check whether there is a customer with that id. So first I check my database that there is a customer from the Id was sent from the data from the frontend. It simply tells us to update the Name, Address and Salary related to that Id.
-        if (customerRepo.existsById(customerUpdateDTO.getCustomerId())) { // existsById() is a boolean method and it requires an integer id. When the customerUpdateDTO is passed in to existsById(), the Id sent from the frontend is checked by the customerRepo or database to see if there is someone matching that Id.
+//        First we must check whether there is a customer with that id. So first I check my database that there is a customer from the ID was sent from the data from the frontend. It simply tells us to update the Name, Address and Salary related to that ID.
+        if (customerRepo.existsById(customerUpdateDTO.getCustomerId())) { // existsById() is a boolean method, and it requires an integer id. When the customerUpdateDTO is passed in to existsById(), the Id sent from the frontend is checked by the customerRepo or database to see if there is someone matching that Id.
 //       Here, if there is a customer, when we use JPAQuerySpec we first need to fetch the customer from the database. Otherwise, if we write a direct query, then we have to give a direct query. If tables in a database are created from entities, then they also come from the database through entities. It can also put it in the database using entities. So I must bring the customer it has with the same type. I must be able to bring it from the Customer type. Otherwise, we cannot assign to this. We cannot assign a String to this. So the incoming data to here must be in Customer type. So I do not need to write queries for this. When I call the customerRepo, it shows me the method matches with the Customer type in the top. I do not need to search for it. If I want to assign something to this, the return type must be Customer. Return types of the methods are shown on the right side in the suggestion box. getById() and getOne() methods are deprecated so those methods had been in the previous versions and cannot be used now. So instead of those methods now it has the getReferenceById(). So I just only have to pass the Id to the getReferenceById(). When I pass the Id, getReferenceById() brings me the whole customer. I do not need to write queries. So I need to give the customerId of customerUpdateDTO when it has been sent from the frontend. When we give like this, it searches the database and find the whole customer object related to the Id which means we only send the customerId to the database. Then all the data related to the customer's ID, such as Name, Address, Salary, ContactNumber, nic and activeState are taken and assigned to the customer. Now we have to update it.
 //            Customer customer = customerRepo.getReferenceById(customerUpdateDTO.getCustomerId()); // This is the code related to the search operation. We searched the particular customer using this method.
 //            Customer customer = customerRepo.findById(customerUpdateDTO.getCustomerId()); // This findById method is gotten from the ChatGPT.
@@ -101,7 +101,7 @@ public class CustomerServiceIMPL implements CustomerService {
 
     @Override
     public CustomerDTO getCustomerById(int customerId) {
-        if (customerRepo.existsById(customerId)) { // Checking by Id whether there is a customer related to the id.
+        if (customerRepo.existsById(customerId)) { // Checking by ID whether there is a customer related to the id.
             // Even there the getCustomerById() is CustomerDTO type, you cannot bring DTOs from the database.
 //            Customer customer = customerRepo.getReferenceById(customerId); // The full details of the customer associated with the ID will be brought here.
             Customer customer = customerRepo.getById(customerId); // This codeline was not needed for this code but in the video it includes this code line for its code error.
@@ -110,11 +110,13 @@ public class CustomerServiceIMPL implements CustomerService {
                     customer.getCustomerName(),
                     customer.getCustomerAddress(),
                     customer.getCustomerSalary(),
-                    customer.getContactNumber(),
+//                    customer.getContactNumber(), // This is the previous way.
+                    customer.getContactNumbers(), // This is the new way.
                     customer.getNic(),
-                    customer.isActive()
+//                    customer.isActive() // This is the previous way.
+                    customer.isActiveState() // This is the new way.
             ); // Conversion of customer named CustomerEntity into a CustomerDTO
-//            return customer; // If we return customer, it is a error. Because it must return a CustomerDTO and not a Customer. So we have to convert the customer named CustomerEntity to the CustomerDTO. So returning customer is wrong.
+//            return customer; // If we return customer, it is an error. Because it must return a CustomerDTO and not a Customer. So we have to convert the customer named CustomerEntity to the CustomerDTO. So returning customer is wrong.
             return customerDTO; // So customerDTO must be returned.
 //            The values that come from the customer, most of them come from the customer related to this ID. I am pushing on the customerDTO. I am grabbing it from the customer reference. The ID that came from the reference. The name that came from the reference. I am mapping the constructor like that. After that, return. Otherwise, I am returning an exception saying that there is no customer. After returning, the customerDTO, that is, the customer reference data, is inside the customerDTO.
         } else {
@@ -148,9 +150,11 @@ public class CustomerServiceIMPL implements CustomerService {
                         customer.getCustomerName(),
                         customer.getCustomerAddress(),
                         customer.getCustomerSalary(),
-                        customer.getContactNumber(),
+//                        customer.getContactNumber(), // This is the previous way.
+                        customer.getContactNumbers(), // This is the new way.
                         customer.getNic(),
-                        customer.isActive()
+//                        customer.isActive() // This is the previous way.
+                        customer.isActiveState() // This is the new way.
                 ); // Creates new DTO object. customer's data are put into the DTO.
 //            So we can put this customerDTO into the customerDTOList. To put the customerDTO into the customerDTOList, we take the customerDTOList reference, and put it outside the customerDTO and after the customerDTO has been created and inside the forEach that reference name is written with add() with boolean type method which requires CustomerDTO type. So we need to add the customerDTO to add().
                 customerDTOList.add(customerDTO); // The DTO that I added from customer to customerDTO in the forEach loop, and added it to customerDTOList. First customer's details are added into the customerDTOList in the first round. First customer's details are erased from the customer at the second round when the forEach loop enters the details of the second customer to the customerDTOList. So the second customer is added as the new object to the customer(reference). So the new object is initialized in the customerDTO reference. Previous customer is erased. So the customer reference has the second object's details. So the second object's details are inserted into the customerDTO. So the newly created DTO is put into the customerDTOList when it rotates in the second round. When the third round starts, third object is put from the getAllCustomers to the customer reference. So the previous object is erased from the customer reference. Even it is erased from the customer, that object was already sent from the customerDTOList in the forEach loop to customerDTOList where it was created initially. customerDTOList in the initial location is not recreated again and again.
@@ -186,7 +190,8 @@ public class CustomerServiceIMPL implements CustomerService {
 
     @Override
     public List<CustomerDTO> getAllCustomersByActiveState(boolean activeState) { // There was an error saying that there is no parameter in the getAllCustomersByActiveState() before putting the boolean activeState as a parameter.
-        List<Customer> getAllCustomers = customerRepo.findAllByActiveEquals(activeState); // Data comes to the getAllCustomers after the filtering from database. So the findAll() is incorrect to do this task. Because it gives all the customers. I need to filter the customers from here. But there are no methods to filter the customers. There is a easy way to do this. As this is a find method, type the find but do not send as find only because we do not know what the database has. Just write something like findgsergnjergkrenj. Also put the activeState to it. It asks us to create this method in the customerRepo when we type this method in here because there is no such method in the customerRepo. If we type f and press ctrl + space, it suggests us the query method that we have created. Now it is correct because we have fetched the data to the Customer from findAllByActiveEquals query.
+//        List<Customer> getAllCustomers = customerRepo.findAllByActiveEquals(activeState); // Data comes to the getAllCustomers after the filtering from database. So the findAll() is incorrect to do this task. Because it gives all the customers. I need to filter the customers from here. But there are no methods to filter the customers. There is an easy way to do this. As this is a find method, type the find but do not send as find only because we do not know what the database has. Just write something like findgsergnjergkrenj. Also put the activeState to it. It asks us to create this method in the customerRepo when we type this method in here because there is no such method in the customerRepo. If we type f and press ctrl + space, it suggests us the query method that we have created. Now it is correct because we have fetched the data to the Customer from findAllByActiveEquals query. This is the previous way of this method.
+        List<Customer> getAllCustomers = customerRepo.findAllByActiveStateEquals(activeState); // This is the new way of this method.
         List<CustomerDTO> customerDTOList = new ArrayList<>();
         for (Customer customer : getAllCustomers) {
             CustomerDTO customerDTO = new CustomerDTO(
@@ -194,9 +199,11 @@ public class CustomerServiceIMPL implements CustomerService {
                     customer.getCustomerName(),
                     customer.getCustomerAddress(),
                     customer.getCustomerSalary(),
-                    customer.getContactNumber(),
+//                    customer.getContactNumber(), // This is the previous way.
+                    customer.getContactNumbers(), // This is the new way.
                     customer.getNic(),
-                    customer.isActive()
+//                    customer.isActive() // This is the previous way.
+                    customer.isActiveState() // This is the new way.
             );
             customerDTOList.add(customerDTO);
         }

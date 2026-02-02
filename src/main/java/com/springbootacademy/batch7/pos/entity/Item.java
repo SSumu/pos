@@ -4,6 +4,8 @@ import com.springbootacademy.batch7.pos.entity.enums.MeasuringUnitType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity // Entity is a table representation.
 @Table(name = "item") // Name of the table. name is the variable.
 // These annotations of NoArgsConstructor, AllArgsConstructor, Getter, Setter and ToString come with the LomBok annotation. After we put this annotation, it does not allow us to add the NoArgsConstructor manually using Generate window. (Fn + Alt + Ins)
@@ -37,8 +39,14 @@ public class Item { // The error in the Item with empty {} means it needs a prim
     @Column(name = "selling_price",length = 100,nullable = false)
     private double sellingPrice;
 
-    @Column(name =  "active_state",columnDefinition = "TINYINT default 0") // There is an another data type same as boolean which is TINYINT. TINYINT means 1,0 of the int. If something not comes to this, we can send the 1 as the default value.
+    @Column(name =  "active_state",columnDefinition = "TINYINT default 0") // There is another data type same as boolean which is TINYINT. TINYINT means 1,0 of the int. If something not comes to this, we can send the 1 as the default value.
     private boolean activeState;
+
+//  One Item can be included in many OrderDetails. Also, one OrderDetail can contain multiple items. So there can be many OrderDetails in this Item. This is a ManyToMany relationship.
+
+    @OneToMany(mappedBy="items")
+    private Set<OrderDetails> orderDetails; // Here it is orderDetails because we put the orderDetails there. It is not orderDetail.
+
 
     // Here we do not create constructor for this. To do this thing Spring introduce us the Lombok dependency.
     // There cannot be two methods with the same name. There can be two methods with different parameters which is called overloading.

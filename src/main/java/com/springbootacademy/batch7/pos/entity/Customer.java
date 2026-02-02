@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 @Entity // We need to define this as an entity by using this @Entity annotation.
 // We can give the name we like to the table as the table name. In this way the table is created with first letter simple in the table name.
@@ -35,38 +36,58 @@ public class Customer {
     private double customerSalary;
 
 //    @Type(type = "json") // This is in old Hibernate versions. This is not used in the current Hibernate versions.
-    @Column(name = "contact_numbers",columnDefinition = "json") // Here the columnDefinition is the definition of the column must be created in the database.
+//    @Column(name = "contact_numbers",columnDefinition = "json") // Here the columnDefinition is the definition of the column must be created in the database.
 //    private ArrayList contactNumber; // This is the old method in old Hibernate versions. But this is not valid in current Hibernate versions.
-    @JdbcTypeCode(SqlTypes.JSON)
-    private ArrayList<String> contactNumber = new ArrayList<>(); // As this is an int type only one contact number can be kept there. But one person may have several contact numbers. So to keep several data in one column related to one person we have to use array list. So the way to do this is that we have to save this in MySQL table as a JSON object. So to use JSON that we have to make the background and dependency to use JSON inside this. So anyway there is a list. So even there is a warning in the ArrayList, we have to prepare the background it needs. We have to say this to apply the JSON to this. In here the way shows in the video was deprecated, and it was in old Hibernate versions. This is the method used in the new Hibernate version.
+//    @JdbcTypeCode(SqlTypes.JSON)
+//    private ArrayList<String> contactNumber = new ArrayList<>(); // As this is an int type only one contact number can be kept there. But one person may have several contact numbers. So to keep several data in one column related to one person we have to use array list. So the way to do this is that we have to save this in MySQL table as a JSON object. So to use JSON that we have to make the background and dependency to use JSON inside this. So anyway there is a list. So even there is a warning in the ArrayList, we have to prepare the background it needs. We have to say this to apply the JSON to this. In here the way shows in the video was deprecated, and it was in old Hibernate versions. This is the method used in the new Hibernate version.
+//    This is the previous form of contact number.
 //    Recommended Minor Improvement
 //    Although ArrayList<String> works fine, it is better to declare it as the interface type:
 //    private List<String> contactNumber = new ArrayList<>();
 
-    @Column(name = "nic")
+    @Column(name = "contact_numbers",columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private ArrayList<String> contactNumbers = new ArrayList<>(); // This is the new form of contact numbers.
+
+//    @Column(name = "nic") // This is the previous @Column.
+@Column(name = "nic",length = 12,unique = true) // This is the new @Column.
     private String nic;
 
-    @Column(name =  "active_state",columnDefinition = "TINYINT default 0") // There is a another data type same as boolean which is TINYINT. TINYINT means 1,0 of the int. If something not comes to this, we can send the 1 as the default value.
-    private boolean active; // This name should be active_state.
+//    @Column(name =  "active_state",columnDefinition = "TINYINT default 0") // There is a another data type same as boolean which is TINYINT. TINYINT means 1,0 of the int. If something not comes to this, we can send the 1 as the default value. This is the previous @Column
+//    private boolean active; // This name should be active_state. This is the previous name for the active state.
+
+    @Column(name =  "active_state",columnDefinition = "TINYINT default 1") // This is the new @Column
+    private boolean activeState; // This is the new name for the active state.
 
     // This is the constructor. This is a no args constructor means there are no arguments inside this.
 //    public Customer(){
 //
 //    }
 
+//    Here we are going to map customer and orders. One customer can have set of orders.
+//    @OneToMany(mappedBy="customer") // The name we used here for the mappedBy is put as the field name in the Order class.
+    @OneToMany(mappedBy="customers")
+    private Set<Order> orders; // orders is the reference.
+
+//    But in here, there no field is created even we put the order. Because we did not put the @Column annotation above the orders field. We only just mapped it to the customer.
+
+//    OneToMany Relationship:- One customer can have many orders.
+
     public Customer() {
     }
 //    Customer customer = new Customer(); // This is a POJO. Objects are not created in previous way to access things inside a POJO. Previously created object and this object are two things. Creating an object from a POJO means calling the constructor below or above. Because the constructor in the Customer class is a NoArgs constructor means no arguments in it and there is a AllArgs constructor with all the  arguments.
 
     // This is the all args constructor.
-    public Customer(int customerId, String customerName, String customerAddress, double customerSalary, ArrayList<String> contactNumber, String nic, boolean active) {
+    public Customer(int customerId, String customerName, String customerAddress, double customerSalary, ArrayList<String> contactNumbers, String nic, boolean activeState) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
         this.customerSalary = customerSalary;
-        this.contactNumber = contactNumber;
+//        this.contactNumber = contactNumber; // This is the previous form
+        this.contactNumbers = contactNumbers; // This is the new form
         this.nic = nic;
-        this.active = active;
+//        this.active = active; This is the previous form
+        this.activeState = activeState; // This is the new form
     }
 
     // This constructor matches to the customer in the Customer class. A constructor is created based on the Id and Name.
@@ -91,17 +112,21 @@ public class Customer {
         return customerSalary;
     }
 
-    public ArrayList<String> getContactNumber() {
-        return contactNumber;
-    }
+//    public ArrayList<String> getContactNumber() {
+//        return contactNumber;
+//    } // This is the previous form.
+
+    public ArrayList<String> getContactNumbers() { return contactNumbers; } // This is the new form.
 
     public String getNic() {
         return nic;
     }
 
-    public boolean isActive() {
-        return active;
-    } // We can remove this isActive method if it does not allow us to access in another place.
+//    public boolean isActive() {
+//        return active;
+//    } // We can remove this isActive method if it does not allow us to access in another place. This is the previous form.
+
+    public boolean isActiveState() { return activeState; } // This is the new form.
 
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
@@ -119,17 +144,21 @@ public class Customer {
         this.customerSalary = customerSalary;
     }
 
-    public void setContactNumber(ArrayList<String> contactNumber) {
-        this.contactNumber = contactNumber;
-    }
+//    public void setContactNumber(ArrayList<String> contactNumber) {
+//        this.contactNumber = contactNumber;
+//    } // This is the previous form.
+
+    public void setContactNumbers(ArrayList<String> contactNumbers) { this.contactNumbers = contactNumbers; } // This is the new form.
 
     public void setNic(String nic) {
         this.nic = nic;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+//    public void setActive(boolean active) {
+//        this.active = active;
+//    } // This is the previous form
+
+    public void setActiveState(boolean activeState) { this.activeState = activeState; } // This is the new form.
 
     // There is a technology called Lombok to create getters and setters.
 
@@ -140,9 +169,11 @@ public class Customer {
                 ", customerName='" + customerName + '\'' +
                 ", customerAddress='" + customerAddress + '\'' +
                 ", customerSalary=" + customerSalary +
-                ", contactNumber=" + contactNumber +
+//                ", contactNumber=" + contactNumber + // This is the previous form
+                ", contactNumbers=" + contactNumbers + // This is the new form
                 ", nic='" + nic + '\'' +
-                ", active=" + active +
+//                ", active=" + active + // This is the previous form
+                ", activeState=" + activeState + // This is the new form
                 '}';
     }
 
@@ -154,7 +185,7 @@ public class Customer {
 
 // ); // But if we pass the data to this argument data and put it inside this Customer() constructor, it calls the all args constructor.
 
-// Constructor is called when the object is created from the name of the clas and at the moment of initialization of that object.
+// Constructor is called when the object is created from the name of the class and at the moment of initialization of that object.
 
 // This is an entity. An Entity is a POJO. Entity is an object.
 // In addition to this, We need to define entities and repositories for the container.
