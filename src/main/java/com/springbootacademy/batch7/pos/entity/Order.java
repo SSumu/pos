@@ -25,6 +25,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int orderId;
 
+//  This active_state column has been added because the video has this column in the orders table.
+    @Column(name =  "active_state",columnDefinition = "TINYINT default 1")
+    private boolean activeState;
+
     @ManyToOne
     @JoinColumn(name="customer_id", nullable=false) // So JoinColumn is placed where the field is created.
 //    private Customer customer; // Here we map the Customer to the Order. customer_id is the name of the column. This customer is the reference which must be the name we put to the mappedBy in the orders field in the Customer class. Otherwise, if we put customers here, then we must put that customers to the mappedBy in the orders field in the Customer class. (e.g.:- mappedBy="customer" in the orders field in the Customer class)

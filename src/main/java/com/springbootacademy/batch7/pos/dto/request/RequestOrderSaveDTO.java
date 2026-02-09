@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 public class RequestOrderSaveDTO {
+    private boolean activeState; // This has to be added according to the video. This was added in the video.
     private int customers; // An ID comes from the frontend for the customers even the Order class expects an object for the customers.
     private Date date;
     private Double total;

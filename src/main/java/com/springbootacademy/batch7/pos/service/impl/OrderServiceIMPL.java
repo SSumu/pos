@@ -1,7 +1,10 @@
 package com.springbootacademy.batch7.pos.service.impl;
 
 import com.springbootacademy.batch7.pos.dto.CustomerDTO;
+import com.springbootacademy.batch7.pos.dto.paginated.PaginatedResponseOrderDetails;
+import com.springbootacademy.batch7.pos.dto.queryinterfaces.OrderDetailInterface;
 import com.springbootacademy.batch7.pos.dto.request.RequestOrderSaveDTO;
+import com.springbootacademy.batch7.pos.dto.response.ResponseOrderDetailsDTO;
 import com.springbootacademy.batch7.pos.entity.Order;
 import com.springbootacademy.batch7.pos.entity.OrderDetails;
 import com.springbootacademy.batch7.pos.repo.CustomerRepo;
@@ -14,6 +17,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -110,6 +114,45 @@ public class OrderServiceIMPL implements OrderService {
 //        throw new Exception("error"); // This showed an error.
         return null;
 
+    }
+
+//  This is related to the Join Query.
+    @Override
+    public PaginatedResponseOrderDetails getAllOrderDetails(boolean status, int page, int size) {
+//        List<ResponseOrderDetailsDTO> orderDetailsDTOS = orderRepo.getAllOrderDetails(status, PageRequest.of(page,size)); // Since the data is retrieved using a Join Query, data will not be returned to query from repo when using ResponseOrderDetailsDTO. When there was a debugger point, the data comes from the getAllOrderDetails() cannot be put into the ResponseOrderDetailsDTO. We cannot do this in this way.
+        List<OrderDetailInterface> orderDetailsDTOS = orderRepo.getAllOrderDetails(status, PageRequest.of(page,size)); // So the Generic type must be the name of the interface inside the package named queryinterfaces. In here it is OrderDetailInterface.
+
+//        System.out.println("come"); // This is the previous form.
+//        System.out.println("come " +orderDetailsDTOS.get(0).getCustomerName()); // This is to check the output. Now this is not needed and this codeline has been removed in the video.
+//        Now data has come to the orderDetailsDTOS.
+
+//      We have to convert the list from OrderDetailInterface type to ResponseOrderDetailsDTO type.
+        List<ResponseOrderDetailsDTO> list = new ArrayList<>();
+//      One data is taken per one round at a time from the list containing data with a data type. In here that data type is OrderDetailInterface.
+        for (OrderDetailInterface o: orderDetailsDTOS){
+            // r is the object of the ResponseOrderDetailsDTO.
+            ResponseOrderDetailsDTO r = new ResponseOrderDetailsDTO(
+                    o.getCustomerName(),
+                    o.getCustomerAddress(),
+                    o.getContactNumber(),
+                    o.getDate(),
+                    o.getTotal()
+            );
+//          If we need, we can write the above ResponseOrderDetailsDTO r = new ResponseOrderDetailsDTO(); code block in one code line.
+            list.add(r); // Data type of the add() is boolean. r is repeatedly changing.
+        }
+//        return null;
+//        return list; // We cannot directly return the list like this because the method's return type is PaginatedResponseOrderDetails.
+
+        PaginatedResponseOrderDetails paginatedResponseOrderDetails = new PaginatedResponseOrderDetails(
+                list,
+//                5
+                orderRepo.countAllOrderDetails(status) // page and size are not needed.
+        );
+//      Here, the manual value 5 was given to dataCount to check whether data is coming to the frontend.
+//      The conversion was done because the list inside the PaginatedResponseOrderDetails was requested.
+
+        return paginatedResponseOrderDetails;
     }
 //  Above complete code inside the addOrder() is the Transaction.
 
